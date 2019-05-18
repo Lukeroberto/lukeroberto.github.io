@@ -8,10 +8,23 @@
 body {
  font-family: 'fontin', sans-serif;
  font-weight: 300;
+
+ /* Oxblood  
+ #76323F; */
+
+ /* Grain */
+ background-color: #D7CeC7;
+
+ /* BlackBoard 
+    #565656 */
+
+ /* Tan
+    #C09F80 */
 }
 
 h1, h2, h3, h4, h5, h6 {
- font-weight: 500;
+    font-weight: 500;
+    color: #76323F;
 }
 
 ul {
@@ -24,13 +37,44 @@ a {
 }
 
 a:link, a:visited {
-    color: blue;
+    color: #76323F;
 }
 
 a:hover {
     color: red;
 }
 
-section {
-    padding: 25px 50px 75px 100px;
+#banner {
+    width: 20%;
+
+    padding-left: 5%;
+
+    margin-top: 3.5%;
+    float: left;
 }
+
+#top {
+    margin-top: 10%;
+}
+.home {
+    float: right;
+
+    width: 55%;
+
+    padding-left: 2%;
+    padding-right: 5%;
+    padding-bottom: 2%;
+
+    margin-top: 3%;
+    margin-right: 7%;
+
+    color: #D7CeC7;
+    background-color: #565656;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.home h2 {
+    color: #D7CeC7 !important;
+}
+

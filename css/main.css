@@ -1,0 +1,27 @@
+@font-face {
+    font-family: 'fontin';
+    src: url('fonts/Fontin-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+ font-family: 'fontin', sans-serif;
+ font-weight: 300;
+}
+
+h1, h2, h3, h4, h5, h6 {
+ font-weight: 500;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:link, a:visited {
+    color: blue;
+}
+
+a:hover {
+    color: red;
+}

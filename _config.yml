@@ -111,12 +111,12 @@ author:
   name             : "Luke Roberto"
   avatar           : "/assets/images/linderpix-NEU-3808-crop.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "interested in all things food, music, and ai"
-  location         : "Somewhere"
+  location         : "Boston, MA"
   email            :
   links:
     - label: "lukeroberto213@gmail.com"
       icon: "fas fa-fw fa-envelope-square"
-      # url: mailto:your.name@email.com
+      url: mailto:lukeroberto213@gmail.com
     - label: "Website"
       icon: "fas fa-fw fa-link"
       # url: "https://your-website.com"

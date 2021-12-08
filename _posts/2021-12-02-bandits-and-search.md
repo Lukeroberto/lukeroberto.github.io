@@ -1,8 +1,3 @@
----
-title: Bandits and Search
-# layout: notebook
----
-
 
 ```python
 %load_ext autoreload

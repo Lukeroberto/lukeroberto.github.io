@@ -1,6 +1,6 @@
 ---
 title: Bandits and Search
-layout: notebook
+# layout: notebook
 ---
 
 

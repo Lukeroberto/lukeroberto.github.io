@@ -2,8 +2,6 @@
 title: Luke's Blog
 ---
 
-# Luke's Blog
-
 Things I have been writing about and exploring recently.
 
 - [Wavelets](posts/wavelets.html)

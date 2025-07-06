@@ -1,6 +1,0 @@
-# Ignore all HTML files
-*.html
-**/*.html
-
-# But don't ignore the template
-!template.html

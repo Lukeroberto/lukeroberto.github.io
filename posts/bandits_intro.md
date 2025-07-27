@@ -1,4 +1,8 @@
-
+---
+title: Bandit Problems
+date: 2025-01-01
+is_post: true
+---
 
 # The Bitter Lesson
 

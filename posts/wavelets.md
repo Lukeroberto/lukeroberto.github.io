@@ -1,4 +1,8 @@
-# Wavelet Post
+---
+title: Peak Finding with Wavelets
+date: 2025-07-06
+is_post: true
+---
 
 I have recently been exploring the use of wavelets for use at work and I figured I would write a bit of a dive into what
 they are and how they can be used. Be warned that this post will contain some math and code that will be used to convey

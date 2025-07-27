@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Learnings on the muon optimizer</title>
         <link rel="stylesheet" href="../style.css" />
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </head>
 <body>
     <div class="site-content">
         <header>
-            <h1></h1>
+            <h1>Learnings on the muon optimizer</h1>
+            <nav>
+                                <a href="../index.html">Back to Home</a>             </nav>
         </header>
         <main>
-            <h1 id="learnings-on-the-muon-optimizer">Learnings on the Muon optimizer</h1>
             <p>I have seen this optimizer pop up in several places now, but the most striking place for me was on the nanogpt <a href="https://github.com/KellerJordan/modded-nanogpt">benchmark</a>. I would like to do a deeper dive soon on how these “speedrun”-style benchmarks work, I’ll just focus on the small rabbit hole I went in on the optimizer itself. A lot of these learnings and analysis are from this post by <a href="https://jeremybernste.in/writing/deriving-muon">Jeremy Bernstein</a>.</p>
             <p>The form of the optimizer is:</p>
             <p><span class="math display">\[

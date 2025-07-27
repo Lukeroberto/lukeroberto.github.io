@@ -1,4 +1,8 @@
-# Learnings on the Muon optimizer
+---
+title: Learnings on the muon optimizer
+date: 2025-07-27
+is_post: true
+---
 
 
 I have seen this optimizer pop up in several places now, but the most striking place for me was on the nanogpt

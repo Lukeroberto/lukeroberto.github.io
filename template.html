@@ -13,6 +13,10 @@
     <div class="site-content">
         <header>
             <h1>$title$</h1>
+            <nav>
+                $if(is_post)$
+                <a href="../index.html">Back to Home</a> $endif$
+            </nav>
         </header>
         <main>
             $body$

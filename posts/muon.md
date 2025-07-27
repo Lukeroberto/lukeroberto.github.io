@@ -13,8 +13,7 @@ W \leftarrow W - lr * \sqrt{\frac{f_{out}}{f_{in}}} * NewtonShulz(\nabla_W L)
 $$
 
 
-This looks pretty close to our usual formula for gradient descent, but with 2 notable differences. Where does the $
-\sqrt{\frac{f_out}{f_in}} $ come frome? And why this there this "Newton Shulz" operation happening after the gradient
+This looks pretty close to our usual formula for gradient descent, but with 2 notable differences. Where does the $\sqrt{\frac{f_{out}}{f_{in}}}$ come frome? And why this there this "Newton Shulz" operation happening after the gradient
 computation?
 
 ## Linear Layers

@@ -13,11 +13,11 @@ these learnings and analysis are from this post by [Jeremy Bernstein](https://je
 The form of the optimizer is:
 
 $$
-W \leftarrow W - lr * \sqrt{\frac{f_{out}}{f_{in}}} * NewtonShulz(\nabla_W L)
+W \leftarrow W - lr * \sqrt{\frac{d_{out}}{d_{in}}} * NewtonShulz(\nabla_W L)
 $$
 
 
-This looks pretty close to our usual formula for gradient descent, but with 2 notable differences. Where does the $\sqrt{\frac{f_{out}}{f_{in}}}$ come frome? And why this there this "Newton Shulz" operation happening after the gradient
+This looks pretty close to our usual formula for gradient descent, but with 2 notable differences. Where does the $\sqrt{\frac{d_{out}}{d_{in}}}$ come frome? And why this there this "Newton Shulz" operation happening after the gradient
 computation?
 
 ## Linear Layers
@@ -41,7 +41,7 @@ are evaluated in the same "units".
 The next step is to try to understand how much the linear layer changes the length of our vector:
 
 $$
-|| W ||_{RMS \rightarrow RMS} = \max_{x\neq 0} \frac{||Wx||_{RMS}}{||x||_{RMS}} = \frac{\sqrt{1/d_{out}} ||Wx||_2}{\sqrt{1/d_{in}} ||x||_2} = \sqrt{\frac{f_{in}}{f_{out}}} * ||W||_*
+|| W ||_{RMS \rightarrow RMS} = \max_{x\neq 0} \frac{||Wx||_{RMS}}{||x||_{RMS}} = \frac{\sqrt{1/d_{out}} ||Wx||_2}{\sqrt{1/d_{in}} ||x||_2} = \sqrt{\frac{d_{in}}{d_{out}}} * ||W||_*
 $$
 
 

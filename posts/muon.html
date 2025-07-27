@@ -18,9 +18,9 @@
             <p>I have seen this optimizer pop up in several places now, but the most striking place for me was on the nanogpt <a href="https://github.com/KellerJordan/modded-nanogpt">benchmark</a>. I would like to do a deeper dive soon on how these “speedrun”-style benchmarks work, I’ll just focus on the small rabbit hole I went in on the optimizer itself. A lot of these learnings and analysis are from this post by <a href="https://jeremybernste.in/writing/deriving-muon">Jeremy Bernstein</a>.</p>
             <p>The form of the optimizer is:</p>
             <p><span class="math display">\[
-            W \leftarrow W - lr * \sqrt{\frac{f_{out}}{f_{in}}} * NewtonShulz(\nabla_W L)
+            W \leftarrow W - lr * \sqrt{\frac{d_{out}}{d_{in}}} * NewtonShulz(\nabla_W L)
             \]</span></p>
-            <p>This looks pretty close to our usual formula for gradient descent, but with 2 notable differences. Where does the <span class="math inline">\(\sqrt{\frac{f_{out}}{f_{in}}}\)</span> come frome? And why this there this “Newton Shulz” operation happening after the gradient computation?</p>
+            <p>This looks pretty close to our usual formula for gradient descent, but with 2 notable differences. Where does the <span class="math inline">\(\sqrt{\frac{d_{out}}{d_{in}}}\)</span> come frome? And why this there this “Newton Shulz” operation happening after the gradient computation?</p>
             <h2 id="linear-layers">Linear Layers</h2>
             <p>Nearly all modern deep learning architectures will contain linear (dense) layers somewhere inside of them. They are the simplest way to build connections from every neuron to every other neuron.</p>
             <p>When taking a gradient across a linear layer, an interesting phenomenon happens, where changing from dimension <span class="math inline">\(d_i\)</span> to <span class="math inline">\(d_{i+1}\)</span> results in a scaling of the gradient. Since the normal gradient operator happens in euclidean space, a vector pointing in the direction <span class="math inline">\([1, 1]\)</span> is “smaller” than a vector pointing in <span class="math inline">\([1, 1, 1]\)</span>. This means that gradients can quickly scale away from the natural geometry of the loss landscape. The ‘trust’ region around a weight update is assumed to be the same in every direction, but this is not reflected in how the gradients are calculated! What we need is a way to help rescale these gradients so they are essentially comparable as we change dimensionality.</p>
@@ -28,7 +28,7 @@
             <p>One useful change is to instead use the RMS norm to measure lengths in these intemediate layers that change dimensionality, <span class="math inline">\(|| v ||_{RMS} = \sqrt{1/d} || v ||\)</span>. This ensures that we scale by the dimension so that the vectors are evaluated in the same “units”.</p>
             <p>The next step is to try to understand how much the linear layer changes the length of our vector:</p>
             <p><span class="math display">\[
-            || W ||_{RMS \rightarrow RMS} = \max_{x\neq 0} \frac{||Wx||_{RMS}}{||x||_{RMS}} = \frac{\sqrt{1/d_{out}} ||Wx||_2}{\sqrt{1/d_{in}} ||x||_2} = \sqrt{\frac{f_{in}}{f_{out}}} * ||W||_*
+            || W ||_{RMS \rightarrow RMS} = \max_{x\neq 0} \frac{||Wx||_{RMS}}{||x||_{RMS}} = \frac{\sqrt{1/d_{out}} ||Wx||_2}{\sqrt{1/d_{in}} ||x||_2} = \sqrt{\frac{d_{in}}{d_{out}}} * ||W||_*
             \]</span></p>
             <p>This essentially boils down to a constant relating the change in dimension and the largest singular value of the matrix in the linear layer. So to control the singular value part of the norm, we can do the SVD of the matrix: <span class="math inline">\(W = U \Sigma V^T\)</span>. Removing <span class="math inline">\(\Sigma\)</span> altogether gets rid of the scaling and leaves us with the principle directions that the gradient will lie in!</p>
             <h2 id="wrapping-up">Wrapping up</h2>

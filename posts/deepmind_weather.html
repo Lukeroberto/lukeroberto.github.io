@@ -1,0 +1,136 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review of Deepmind’s Weather Prediction Models</title>
+        <link rel="stylesheet" href="../style.css" />
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+    <div class="site-content">
+        <header>
+            <h1>Review of Deepmind’s Weather Prediction Models</h1>
+            <nav>
+                                <a href="../index.html">Back to Home</a>             </nav>
+        </header>
+        <main>
+            <p>I have always been quite interested in learning about applications of deep learning for science and engineering. I recently surveyed some papers from Deepmind on their attempts at the weather prediction task.</p>
+            <p>They have two models that I want to review: <a href="https://www.science.org/stoken/author-tokens/ST-1550/full">GraphCast</a> and <a href="https://www.nature.com/articles/s41586-024-08252-9">GenCast</a>.</p>
+            <h2 id="graphcast">GraphCast</h2>
+            <h3 id="data-modeling">Data Modeling</h3>
+            <p>They represent the state of the world at the current time <span class="math inline">\(t_0\)</span> and the previous step <span class="math inline">\(t_{-6h}\)</span>.</p>
+            <p>The earth is represented as a large lat/lon grid at 0.25 degree angular discretization. This leads to a 721x1440 cell grid, or ~1M cells representing the state of the earth. Each cell has 5 surface variables and 6 atmospheric variables at 37 pressure levels, leading to 5 + 6*37 = 227 state variables per grid cell.</p>
+            <center>
+            <table>
+            <thead>
+            <tr class="header">
+            <th>Surface</th>
+            <th>Atmosphere</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="odd">
+            <td>temp</td>
+            <td>temp</td>
+            </tr>
+            <tr class="even">
+            <td>U, V wind component</td>
+            <td>U, V, W wind component</td>
+            </tr>
+            <tr class="odd">
+            <td>mean sea level pressure</td>
+            <td>geopotential</td>
+            </tr>
+            <tr class="even">
+            <td>total precipitation</td>
+            <td>specific humidity</td>
+            </tr>
+            </tbody>
+            </table>
+            </center>
+            <h3 id="model-architecture">Model Architecture</h3>
+            <p>The flow of data through the model is through a series of processing steps.</p>
+            <p>Input -&gt; Encoder -&gt; Processor -&gt; Decoder -&gt; Output (rollout uses this as the input for the next step)</p>
+            <h4 id="encoder">Encoder</h4>
+            <p>The encoder is an embedding model that pools local grid points into a point on a mesh representation of the globe. This mesh is a multi-scale mesh where an icosahedron is subdivided multiple times. This allows message passing to happen on a variety of distance scales in a single step.</p>
+            <h4 id="processor">Processor</h4>
+            <p>The processor is the model reponsible for running the actual simulation of weather. Once we have a multi-mesh of the current state of the earth, a message-passing GNN is used to perform several rounds to simulate the dynamics over the next 6hr time interval.</p>
+            <h4 id="decoder">Decoder</h4>
+            <p>The decoder essentially performs the reverse of the encoder model, taking meshpoints and projecting them back onto the original lat/lon mesh.</p>
+            <h3 id="training-results-and-limitations">Training, Results, and Limitations</h3>
+            <p>The model is trained in a curriculum fashion, starting with a lower resolution state grid, and then a second round of training finetunes on the final resolution.</p>
+            <p>The loss function is defined as the MSE loss against <a href="https://cds.climate.copernicus.eu/datasets/reanalysis-era5-single-levels?tab=overview">ERA5</a> estimates of predicted state. A similar curriculum is used where a progressive rollout strategy from a single step (6hrs) to 12 steps (3 days).</p>
+            <p>The main limitations of this model were the MSE loss encourages predictions that are “blurry”, where overtime the rollouts capture the general trend of the dynamics, but unable to distinguish any short length scale behavior. Additionally, these types of models do not have any sort of uncertainty quantification or confidence estimates in their predictions. Without this, these models do not have a lot of utility on their own and so more work needed to be done in this direction.</p>
+            <h2 id="gencast">GenCast</h2>
+            <p>GenCast inherits many of the same data and architectural modeling strategies, but with a few modernizations and techniques to tackle the limitations listed before.</p>
+            <p>The main distinction between these models is that GenCast is meant to provide many different trajectories since it is a generative model using the current state as a seed. This means that these trajectories can be ensembled together and used as a sort of uncertainty estimate over time.</p>
+            <h3 id="data-modeling-1">Data Modeling</h3>
+            <p>Similar to GraphCast, there surface and atmospheric variables at several pressure levels but they also provide some static variabls this time as well:</p>
+            <center>
+            <table>
+            <thead>
+            <tr class="header">
+            <th>Atmosphere</th>
+            <th>Surface</th>
+            <th>Static</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="odd">
+            <td>U, V, W wind components</td>
+            <td>U, V wind components</td>
+            <td>geopotential at surface</td>
+            </tr>
+            <tr class="even">
+            <td>geopotenial</td>
+            <td>pressure</td>
+            <td>land/sea mask</td>
+            </tr>
+            <tr class="odd">
+            <td>temp</td>
+            <td>temp</td>
+            <td>lat/lon</td>
+            </tr>
+            <tr class="even">
+            <td></td>
+            <td>sea surface temp</td>
+            <td>time of day</td>
+            </tr>
+            <tr class="odd">
+            <td></td>
+            <td>total precipatation</td>
+            <td>year progress</td>
+            </tr>
+            </tbody>
+            </table>
+            </center>
+            <h3 id="model-architecture-1">Model Architecture</h3>
+            <p>The general architecture is similar to GraphCast, but the models used for each step have been swapped out.</p>
+            <p>Input -&gt; Encoder -&gt; Processor -&gt; Decoder -&gt; Output (connect as input for rollout)</p>
+            <h4 id="encoder-and-decoder">Encoder and Decoder</h4>
+            <p>These are the same type of networks as before, except they do not need to embed/decode to a multi-mesh. The authors simplified the data setup with only the highest resolution mesh, an icosahedron split 6 times.</p>
+            <h4 id="processor-1">Processor</h4>
+            <p>The processor is a graph transformer network that performs attention to a k-hop neighborhood.</p>
+            <h3 id="training-and-results">Training and Results</h3>
+            <p>This is a denoising diffusion model, which I am hoping to review these at some point. Essentially, they are trained to denoise progressively corrupted versions of their input until they are able to generate likely inputs from sampled noise. Many modeling choices had to be fixed when building a diffusion model: noise schedule, noise scaling, preconditioning, and the loss weighting at different noise levels. These are all important parts of designing the network properly.</p>
+            <p>In this application, the loop is visualized rather well by the image below. The input is taken and combined with randomly sampled spherical noise into <span class="math inline">\(r_{\theta}\)</span>, which represents the encoder, processor, and decoder to refine the corrupted input in several stages. A diffusion solver is used in conjunction with this model and inputs to iteratively refine the estimate of the next time step. This can then be fed back with another sampled noise to continue a rollout in time.</p>
+            <p>One can see how if you start with several sampled noise vectors, then several predictions can be rolled out in time. This allows the model to concentrate from several different starting positions what trajectories are most likely to happen given its training data.</p>
+            <figure>
+            <img src="../assets/deepmind_weather/gencast_diffusion.webp" alt="" /><figcaption>GenCast</figcaption>
+            </figure>
+        </main>
+    </div>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section contact">
+                <a href="https://github.com/lukeroberto">GitHub</a> |
+                <a href="https://linkedin.com/in/lukeroberto">LinkedIn</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Luke Roberto. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

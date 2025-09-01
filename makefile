@@ -15,7 +15,7 @@ all: $(HTML_FILES)
 
 # Rule for converting Markdown files in the posts directory to HTML
 $(SRC_DIR)/%.html: $(SRC_DIR)/%.md template.html
-	pandoc -s --mathjax --template=template.html -c ../style.css $< -o $@
+	pandoc -s --mathjax --template=template.html -c /lukeroberto.github.io/style.css $< -o $@
 
 # Rule for converting index.md in the root directory
 index.html: index.md template.html

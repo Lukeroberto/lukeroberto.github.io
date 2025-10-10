@@ -4,6 +4,7 @@ title: Luke's Blog
 
 Things I have been writing about and exploring recently.
 
+- [OaK Architecture](posts/oak.html)
 - [Weather Prediction](posts/deepmind_weather.html)
 - [Muon Optimizer](posts/muon.html)
 - [Wavelets](posts/wavelets.html)
